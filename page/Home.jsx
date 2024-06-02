@@ -1,37 +1,41 @@
 import { StatusBar } from 'expo-status-bar';
-import {ScrollView, Text, View, TouchableOpacity, Image, BackHandler} from 'react-native';
+import {ScrollView, Text, View, Image } from 'react-native';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import styles from '../assets/styleSheet';
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import getLocation from "../network/getLocation";
 import getDate from "../network/getDate";
 import {getWeatherInfoWithLocation, getWeatherInfoWithCode} from "../network/getWeatherInfo";
 import {getCityCode, getRegionCode} from "../network/getCityCode";
 import {getSensibleTemp} from "../network/getPercTemp";
 import {renderDate, renderIconPTY, renderIconSKY, renderTemp} from "../render/render";
+import {getRecommendClothes} from "../network/dresses";
+import {SearchContext} from "../context/SearchContext";
+import {LoadingContext} from "../context/LoadingContext";
 
 
-export default function Home({navigation}) {
-
+export default function Home() {
   const [location, setLocation] = useState({ region: "", city: "", district: "", error: false, latitude: null, longitude: null })
   const [date, setDate] = useState({ date: "", dayOfWeek: "", hour: "" })
-  const [loading, setLoading] = useState(true)
+  const {loading, setLoading} = useContext(LoadingContext)
   const [weatherInformation, setWeatherInformation] = useState()
   const [currentTemp, setCurrentTemp] = useState()
   const [temp, setTemp] = useState({current : null, TMX : null, TMN: null, PTY: null, WSD: null})
   const [percTemp, setPercTemp] = useState()
+  const [recommendClothes, setRecommendClothes] = useState({OUTER : null, TOP : null, BOTTOM : null})
   const [weatherByHour, setWeatherByHour] = useState([])
   const [nextTwoDaysWeather, setNextTwoDaysWeather] = useState([])
   const [dayThreeToSeven, setDayThreeToSeven] = useState([])
+  const {search} = useContext(SearchContext)
 
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
 
       setDate(getDate());
 
-      const userLocation = await getLocation();
+      const userLocation = await getLocation(search);
       setLocation(userLocation);
 
       const getWeatherInformation = await getWeatherInfoWithLocation(1, userLocation.latitude, userLocation.longitude, );
@@ -46,7 +50,7 @@ export default function Home({navigation}) {
     };
 
     fetchData();
-  }, []);
+  }, [search]);
 
   useEffect(() => {
     if (weatherInformation) { segmentData(weatherInformation) }
@@ -110,7 +114,9 @@ export default function Home({navigation}) {
       if (data.category === "REH") reh = data.obsrValue
       if (data.category === "WSD") wsd = data.obsrValue
     });
-    setPercTemp(getSensibleTemp(t1h, reh, wsd))
+    const value = getSensibleTemp(t1h, reh, wsd)
+    setPercTemp(value)
+    setRecommendClothes(getRecommendClothes(value))
     setLoading(false)
   }
 
@@ -164,15 +170,15 @@ export default function Home({navigation}) {
 
             <View style={styles.suggestedItem}>
               <Text style={{fontWeight: 600}}>OUTER</Text>
-              <Text>지금 날씨로는 외투가 딱히 필요 없어보여요.</Text>
+              <Text>{recommendClothes.OUTER}</Text>
             </View>
             <View style={styles.suggestedItem}>
               <Text style={{fontWeight: 600}}>TOP</Text>
-              <Text>오늘은 따듯한 날씨로 기모가 없는 맨투맨을 추천해요. </Text>
+              <Text>{recommendClothes.TOP}</Text>
             </View>
             <View style={styles.suggestedItem}>
               <Text style={{fontWeight: 600}}>BOTTOM</Text>
-              <Text>긴바지를 입어도 충분한 날씨에요. 취향에 따라 반바지도 좋아요.</Text>
+              <Text>{recommendClothes.BOTTOM}</Text>
             </View>
           </View>
 
