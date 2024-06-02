@@ -204,22 +204,22 @@ const cityData = [
 ];
 
 const regionData = [
+  { region: "대전광역시", code: "11C20000" },
   { region: "충청남도", code: "11C20000" },
   { region: "충청북도", code: "11C10000" },
-  { region: "서울", code: "11B00000" },
-  { region: "인천", code: "11B00000" },
+  { region: "서울특별시", code: "11B00000" },
+  { region: "인천광역시", code: "11B00000" },
   { region: "경기도", code: "11B00000" },
-  { region: "강원도영서", code: "11D10000" },
-  { region: "강원도영동", code: "11D20000" },
-  { region: "광주", code: "11F20000" },
+  { region: "강원특별자치도", code: "11D20000" },
+  { region: "광주광역시", code: "11F20000" },
   { region: "전라남도", code: "11F20000" },
-  { region: "전라북도", code: "11F10000" },
-  { region: "대구", code: "11H10000" },
+  { region: "전북특별자치도", code: "11F10000" },
+  { region: "대구광역시", code: "11H10000" },
   { region: "경상북도", code: "11H10000" },
-  { region: "부산", code: "11H20000" },
-  { region: "울산", code: "11H20000" },
+  { region: "부산광역시", code: "11H20000" },
+  { region: "울산광역시", code: "11H20000" },
   { region: "경상남도", code: "11H20000" },
-  { region: "제주도", code: "11G00000" }
+  { region: "제주특별자치도", code: "11G00000" }
 ];
 
 
